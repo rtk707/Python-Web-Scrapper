@@ -14,21 +14,21 @@ data_storage = DataStorage()
 
 class Service:
     
-    async def reload_cache(self, page_count) -> str:
-        return await self.scrape_data(page_count)
+    async def reload_cache(self, page_count, proxy_string) -> str:
+        return await self.scrape_data(page_count, proxy_string)
     
-    async def get_products(self, page_count) -> str:
+    async def get_products(self, page_count, proxy_string) -> str:
         cached_data = cache.get('scrapped_data')
         if cached_data:
             return json.loads(cached_data)
-        return await self.scrape_data(page_count)
+        return await self.scrape_data(page_count, proxy_string)
     
-    async def scrape_data(self,page_count) -> str:
+    async def scrape_data(self, page_count, proxy_string) -> str:
         final_data = []
         
         for page_index in range(page_count):    
             url = f'{os.getenv("URL")}{page_index+1}'
-            page_html = await scrapper.fetch(url)
+            page_html = await scrapper.fetch(url, proxy_string)
             parsed_data = scrapper.parse(page_html)
             final_data += parsed_data
             

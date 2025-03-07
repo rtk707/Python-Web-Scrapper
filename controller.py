@@ -1,15 +1,16 @@
 # controller.py
 from fastapi import APIRouter
+from input_dto import InputRequest
 from service import Service
 
 # Create an APIRouter object to define routes
 router = APIRouter()
 service = Service()
 
-@router.get('/reload-cache/{page_count}')
-async def get_products(page_count: int) -> str:
-    return await service.reload_cache(page_count)
+@router.post('/reload-cache')
+async def get_products(req: InputRequest) -> str:
+    return await service.reload_cache(req.page_count, req.proxy_string)
 
-@router.get('/get-products/{page_count}')
-async def get_products(page_count:int) -> str:
-    return await service.get_products(page_count)
+@router.get('/get-products')
+async def get_products(req:InputRequest) -> str:
+    return await service.get_products(req.page_count, req.proxy_string)

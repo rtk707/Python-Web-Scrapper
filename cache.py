@@ -27,7 +27,7 @@ class RedisCache:
         updated_count = 0
         if cached_data:
             for item in data:
-                cached_item = next((cached for cached in cached_data if cached['id'] == item['id']), None)
+                cached_item = next((cached for cached in cached_data if cached['product_id'] == item['product_id']), None)
                 
                 if cached_item:
                     if cached_item['price'] != item['price']:

@@ -10,10 +10,19 @@ class ProductScraper:
             "https": "http://36.64.6.5:8080"
         }
     @retry(stop=stop_after_attempt(3), wait=wait_fixed(5))
-    async def fetch(self, url: str) -> str:
+    async def fetch(self, url: str, proxy_string:str) -> str:
+        
         try:
             session = HTMLSession()
-            response = session.get(url)
+            if proxy_string:
+                proxies = {
+                        'http': f'http://{proxy_string}',  # For HTTP requests
+                        'https': f'https://{proxy_string}'  # For HTTPS requests
+                    }
+        
+                response = session.get(url, proxies=proxies)
+            else:
+                response = session.get(url)
             return response
         except:
             raise    
