@@ -22,3 +22,21 @@ class RedisCache:
         """Clear the cache in Redis."""
         self.cache.flushdb()  # Clear the entire Redis database (caution)
     
+    def update_cache(self, data, key):
+        cached_data = self.get(key)
+        updated_count = 0
+        if cached_data:
+            for item in data:
+                cached_item = next((cached for cached in cached_data if cached['id'] == item['id']), None)
+                
+                if cached_item:
+                    if cached_item['price'] != item['price']:
+                        cached_item['price'] = item['price']
+                        cached_item.update(item)
+                        updated_count+=1
+        else:
+            self.set(key, data)
+            updated_count += len(data)
+        return updated_count
+            
+        

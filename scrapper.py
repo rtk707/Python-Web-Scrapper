@@ -1,7 +1,7 @@
 from requests_html import HTMLSession
 from typing import Dict, List
 
-from tenacity import retry,stop_after_attempt, wait_fixed
+from tenacity import retry, stop_after_attempt, wait_fixed
 
 class ProductScraper:
     def __init__(self):
@@ -10,8 +10,7 @@ class ProductScraper:
             "https": "http://36.64.6.5:8080"
         }
     @retry(stop=stop_after_attempt(3), wait=wait_fixed(5))
-    def fetch(self, url: str) -> str:
-        """Fetch the raw HTML content of a page."""
+    async def fetch(self, url: str) -> str:
         try:
             session = HTMLSession()
             response = session.get(url)
@@ -19,7 +18,6 @@ class ProductScraper:
         except:
             raise    
     def parse(self, html_data: str) -> List[Dict]:
-        """Parse the raw HTML to extract product data."""
         # Use the HTML response to extract product information
         product_tags = html_data.html.find('div.product-inner')
         products = []
@@ -39,15 +37,3 @@ class ProductScraper:
             
             products.append(product_data)
         return products
-    
-    def format(self, products: List[Dict]) -> Dict[int, Dict]:
-        """Format the parsed products into a dictionary with product_id as keys."""
-        formatted_products = []
-        for product in products:
-            formatted_products.append({
-                'product_id': product['product_id'],
-                'title': product['title'],
-                'price': product['price'],
-                'image': product['image']
-            })
-        return formatted_products
